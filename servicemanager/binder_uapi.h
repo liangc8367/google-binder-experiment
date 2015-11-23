@@ -18,6 +18,12 @@
  ****************************************************************************/
 #ifndef _UAPI_LINUX_BINDER_H
 #define _UAPI_LINUX_BINDER_H
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <linux/ioctl.h>
 #define B_PACK_CHARS(c1, c2, c3, c4)   ((((c1)<<24)) | (((c2)<<16)) | (((c3)<<8)) | (c4))
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
@@ -73,7 +79,8 @@ struct binder_version {
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
 #define BINDER_CURRENT_PROTOCOL_VERSION 7
 #else
-#define BINDER_CURRENT_PROTOCOL_VERSION 8
+//liangc #define BINDER_CURRENT_PROTOCOL_VERSION 8
+#define BINDER_CURRENT_PROTOCOL_VERSION 7
 #endif
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
 #define BINDER_WRITE_READ _IOWR('b', 1, struct binder_write_read)
@@ -187,4 +194,9 @@ enum binder_driver_command_protocol {
  BC_DEAD_BINDER_DONE = _IOW('c', 16, binder_uintptr_t),
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
 };
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

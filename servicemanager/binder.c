@@ -17,7 +17,8 @@
 #define TRACE 0
 
 #define LOG_TAG "Binder"
-#include <cutils/log.h>
+//#include <cutils/log.h>
+#define ALOGE(fmt, ...) fprintf(stderr, LOG_TAG": "fmt, ##__VA_ARGS__)
 
 void bio_init_from_txn(struct binder_io *io, struct binder_transaction_data *txn);
 

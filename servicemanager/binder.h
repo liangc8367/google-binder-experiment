@@ -5,7 +5,17 @@
 #define _BINDER_H_
 
 #include <sys/ioctl.h>
-#include <linux/binder.h>
+//#include <linux/binder.h>
+
+#include <linux/types.h>  // for __u32 etc.
+#define __user
+
+#include "binder_uapi.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 struct binder_state;
 
@@ -91,4 +101,8 @@ uint32_t bio_get_uint32(struct binder_io *bio);
 uint16_t *bio_get_string16(struct binder_io *bio, size_t *sz);
 uint32_t bio_get_ref(struct binder_io *bio);
 
+
+#ifdef __cplusplus
+}
+#endif
 #endif

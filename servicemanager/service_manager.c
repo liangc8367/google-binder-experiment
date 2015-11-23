@@ -8,10 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if 0
 #include <private/android_filesystem_config.h>
 
 #include <selinux/android.h>
 #include <selinux/avc.h>
+#endif
 
 #include "binder.h"
 
@@ -20,7 +22,10 @@
 #define ALOGE(x...) fprintf(stderr, "svcmgr: " x)
 #else
 #define LOG_TAG "ServiceManager"
-#include <cutils/log.h>
+// #include <cutils/log.h>
+#define ALOGE(fmt, ...) fprintf(stderr, LOG_TAG"[e]: "fmt, ##__VA_ARGS__)
+#define ALOGI(fmt, ...) fprintf(stderr, LOG_TAG"[i]: "fmt, ##__VA_ARGS__)
+
 #endif
 
 struct audit_data {
@@ -58,15 +63,16 @@ int str16eq(const uint16_t *a, const char *b)
     return 1;
 }
 
-static int selinux_enabled;
+//static int selinux_enabled;
 static char *service_manager_context;
-static struct selabel_handle* sehandle;
+//static struct selabel_handle* sehandle;
 
 static bool check_mac_perms(pid_t spid, uid_t uid, const char *tctx, const char *perm, const char *name)
 {
     char *sctx = NULL;
-    const char *class = "service_manager";
+    const char *class_name = "service_manager";
     bool allowed;
+/*
     struct audit_data ad;
 
     if (getpidcon(spid, &sctx) < 0) {
@@ -82,14 +88,19 @@ static bool check_mac_perms(pid_t spid, uid_t uid, const char *tctx, const char 
     allowed = (result == 0);
 
     freecon(sctx);
+*/
+    ALOGI("spid=%d, uid=%d, name=%s\n", spid, uid, name);
+    allowed = true;
     return allowed;
 }
 
 static bool check_mac_perms_from_getcon(pid_t spid, uid_t uid, const char *perm)
 {
+/*
     if (selinux_enabled <= 0) {
         return true;
     }
+*/
 
     return check_mac_perms(spid, uid, service_manager_context, perm, NULL);
 }
@@ -98,7 +109,7 @@ static bool check_mac_perms_from_lookup(pid_t spid, uid_t uid, const char *perm,
 {
     bool allowed;
     char *tctx = NULL;
-
+#if 0
     if (selinux_enabled <= 0) {
         return true;
     }
@@ -112,9 +123,10 @@ static bool check_mac_perms_from_lookup(pid_t spid, uid_t uid, const char *perm,
         ALOGE("SELinux: No match for %s in service_contexts.\n", name);
         return false;
     }
+#endif
 
     allowed = check_mac_perms(spid, uid, tctx, perm, name);
-    freecon(tctx);
+//    freecon(tctx);
     return allowed;
 }
 
@@ -186,6 +198,7 @@ uint32_t do_find_service(struct binder_state *bs, const uint16_t *s, size_t len,
         return 0;
     }
 
+#if 0
     if (!si->allow_isolated) {
         // If this service doesn't allow access from isolated processes,
         // then check the uid to see if it is isolated.
@@ -194,6 +207,7 @@ uint32_t do_find_service(struct binder_state *bs, const uint16_t *s, size_t len,
             return 0;
         }
     }
+#endif
 
     if (!svc_can_find(s, len, spid, uid)) {
         return 0;
@@ -230,7 +244,7 @@ int do_add_service(struct binder_state *bs,
         }
         si->handle = handle;
     } else {
-        si = malloc(sizeof(*si) + (len + 1) * sizeof(uint16_t));
+        si = (struct svcinfo *)malloc(sizeof(*si) + (len + 1) * sizeof(uint16_t));
         if (!si) {
             ALOGE("add_service('%s',%x) uid=%d - OUT OF MEMORY\n",
                  str8(s, len), handle, uid);
@@ -240,7 +254,7 @@ int do_add_service(struct binder_state *bs,
         si->len = len;
         memcpy(si->name, s, (len + 1) * sizeof(uint16_t));
         si->name[len] = '\0';
-        si->death.func = (void*) svcinfo_death;
+        si->death.func = svcinfo_death;
         si->death.ptr = si;
         si->allow_isolated = allow_isolated;
         si->next = svclist;
@@ -289,6 +303,7 @@ int svcmgr_handler(struct binder_state *bs,
         return -1;
     }
 
+#if 0
     if (sehandle && selinux_status_updated() > 0) {
         struct selabel_handle *tmp_sehandle = selinux_android_service_context_handle();
         if (tmp_sehandle) {
@@ -296,6 +311,7 @@ int svcmgr_handler(struct binder_state *bs,
             sehandle = tmp_sehandle;
         }
     }
+#endif
 
     switch(txn->code) {
     case SVC_MGR_GET_SERVICE:
@@ -348,7 +364,7 @@ int svcmgr_handler(struct binder_state *bs,
     return 0;
 }
 
-
+#if 0
 static int audit_callback(void *data, security_class_t cls, char *buf, size_t len)
 {
     struct audit_data *ad = (struct audit_data *)data;
@@ -361,6 +377,7 @@ static int audit_callback(void *data, security_class_t cls, char *buf, size_t le
     snprintf(buf, len, "service=%s pid=%d uid=%d", ad->name, ad->pid, ad->uid);
     return 0;
 }
+#endif
 
 int main(int argc, char **argv)
 {
@@ -377,6 +394,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
+#if 0
     selinux_enabled = is_selinux_enabled();
     sehandle = selinux_android_service_context_handle();
     selinux_status_open(true);
@@ -398,6 +416,7 @@ int main(int argc, char **argv)
     selinux_set_callback(SELINUX_CB_AUDIT, cb);
     cb.func_log = selinux_log_callback;
     selinux_set_callback(SELINUX_CB_LOG, cb);
+#endif
 
     binder_loop(bs, svcmgr_handler);
 
