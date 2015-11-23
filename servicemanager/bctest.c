@@ -6,6 +6,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include <stdint.h>
 #include "binder.h"
 
 uint32_t svcmgr_lookup(struct binder_state *bs, uint32_t target, const char *name)
@@ -95,6 +96,11 @@ int main(int argc, char **argv)
                 return -1;
             }
             svcmgr_publish(bs, svcmgr, argv[1], &token);
+		int idle = 0;
+		while(1){
+			sleep(2);
+			fprintf(stderr, "%d\n", idle++);
+		}
             argc--;
             argv++;
         } else {
