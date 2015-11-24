@@ -8,10 +8,14 @@ CPPFLAGS=-g -std=c++11 -I$(INC_PATH)
 OBJS=\
 	binderThroughputTest.o \
 	ProcessState.o \
-	String16.o
+	Parcel.o \
 	
-binder_throughput_test : $(OBJS)
-	g++ -o $@ $(OBJS)
+UTIL_OBJS=\
+	String16.o \
+	RefBase.o
+	
+binder_throughput_test : $(OBJS) $(UTIL_OBJS)
+	g++ -o $@ $(OBJS) $(UTIL_OBJS)
 
 binderThroughputTest.o : tests/binderThroughputTest.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
@@ -19,7 +23,13 @@ binderThroughputTest.o : tests/binderThroughputTest.cpp
 ProcessState.o : ProcessState.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
 
+Parcel.o : Parcel.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+
 ### library ###
 LIBUTILS_PATH=../libutils
 String16.o : $(LIBUTILS_PATH)/String16.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+	
+RefBase.o : $(LIBUTILS_PATH)/RefBase.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<

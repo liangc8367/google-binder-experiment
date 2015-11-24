@@ -43,9 +43,14 @@
 #include <stdint.h>
 #include <sys/mman.h>
 
+#include <limits.h> // for UINT_MAX
+#include <limits>
 #ifndef INT32_MAX
 #define INT32_MAX ((int32_t)(2147483647))
 #endif
+
+// copied from bionic/libc/arch-x86/include/machine/limits.h
+#define SIZE_T_MAX  UINT_MAX    /* max value for a size_t (historic) */
 
 #define LOG_REFS(...)
 //#define LOG_REFS(...) ALOG(LOG_DEBUG, "Parcel", __VA_ARGS__)

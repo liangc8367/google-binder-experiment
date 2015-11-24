@@ -16,12 +16,7 @@
 
 #include <utils/String16.h>
 
-// liangc, 2015/11/24 #include <utils/Log.h>
-#include <assert.h>
-#define ALOG_ASSERT(condition, fmt, ...) \
-    assert(condition)
-#define LOG_ALWAYS_FATAL(msg) \
-    assert(false)
+#include <utils/Log.h>
 
 #include <utils/Unicode.h>
 #include <utils/String8.h>

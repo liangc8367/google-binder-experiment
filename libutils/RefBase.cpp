@@ -28,7 +28,7 @@
 #include <utils/RefBase.h>
 
 #include <utils/Atomic.h>
-#include <utils/CallStack.h>
+//#include <utils/CallStack.h>
 #include <utils/Log.h>
 #include <utils/threads.h>
 
@@ -64,10 +64,13 @@ namespace android {
 class RefBase::weakref_impl : public RefBase::weakref_type
 {
 public:
-    volatile int32_t    mStrong;
-    volatile int32_t    mWeak;
+//    volatile int32_t    mStrong;
+    std::atomic_int_least32_t mStrong;
+//    volatile int32_t    mWeak;
+    std::atomic_int_least32_t mWeak;
     RefBase* const      mBase;
-    volatile int32_t    mFlags;
+//    volatile int32_t    mFlags;
+    std::atomic_int_least32_t mFlags;
 
 #if !DEBUG_REFS
 
@@ -325,7 +328,8 @@ void RefBase::incStrong(const void* id) const
     refs->incWeak(id);
     
     refs->addStrongRef(id);
-    const int32_t c = android_atomic_inc(&refs->mStrong);
+//    const int32_t c = android_atomic_inc(&refs->mStrong);
+    const int32_t c = refs->mStrong++;
     ALOG_ASSERT(c > 0, "incStrong() called on %p after last strong ref", refs);
 #if PRINT_REFS
     ALOGD("incStrong of %p from %p: cnt=%d\n", this, id, c);
@@ -334,7 +338,8 @@ void RefBase::incStrong(const void* id) const
         return;
     }
 
-    android_atomic_add(-INITIAL_STRONG_VALUE, &refs->mStrong);
+//    android_atomic_add(-INITIAL_STRONG_VALUE, &refs->mStrong);
+    refs->mStrong += -INITIAL_STRONG_VALUE;
     refs->mBase->onFirstRef();
 }
 
@@ -342,7 +347,8 @@ void RefBase::decStrong(const void* id) const
 {
     weakref_impl* const refs = mRefs;
     refs->removeStrongRef(id);
-    const int32_t c = android_atomic_dec(&refs->mStrong);
+//    const int32_t c = android_atomic_dec(&refs->mStrong);
+    const int32_t c = refs->mStrong--;
 #if PRINT_REFS
     ALOGD("decStrong of %p from %p: cnt=%d\n", this, id, c);
 #endif
@@ -362,7 +368,8 @@ void RefBase::forceIncStrong(const void* id) const
     refs->incWeak(id);
     
     refs->addStrongRef(id);
-    const int32_t c = android_atomic_inc(&refs->mStrong);
+//    const int32_t c = android_atomic_inc(&refs->mStrong);
+    const int32_t c = refs->mStrong++;
     ALOG_ASSERT(c >= 0, "forceIncStrong called on %p after ref count underflow",
                refs);
 #if PRINT_REFS
@@ -371,7 +378,8 @@ void RefBase::forceIncStrong(const void* id) const
 
     switch (c) {
     case INITIAL_STRONG_VALUE:
-        android_atomic_add(-INITIAL_STRONG_VALUE, &refs->mStrong);
+//        android_atomic_add(-INITIAL_STRONG_VALUE, &refs->mStrong);
+        refs->mStrong += -INITIAL_STRONG_VALUE;
         // fall through...
     case 0:
         refs->mBase->onFirstRef();
@@ -392,7 +400,8 @@ void RefBase::weakref_type::incWeak(const void* id)
 {
     weakref_impl* const impl = static_cast<weakref_impl*>(this);
     impl->addWeakRef(id);
-    const int32_t c __unused = android_atomic_inc(&impl->mWeak);
+//    const int32_t c __unused = android_atomic_inc(&impl->mWeak);
+    const int32_t c __unused = impl->mWeak++;
     ALOG_ASSERT(c >= 0, "incWeak called on %p after last weak ref", this);
 }
 
@@ -401,7 +410,8 @@ void RefBase::weakref_type::decWeak(const void* id)
 {
     weakref_impl* const impl = static_cast<weakref_impl*>(this);
     impl->removeWeakRef(id);
-    const int32_t c = android_atomic_dec(&impl->mWeak);
+//    const int32_t c = android_atomic_dec(&impl->mWeak);
+    const int32_t c = impl->mWeak--;
     ALOG_ASSERT(c >= 1, "decWeak called on %p too many times", this);
     if (c != 1) return;
 
@@ -442,7 +452,8 @@ bool RefBase::weakref_type::attemptIncStrong(const void* id)
     while (curCount > 0 && curCount != INITIAL_STRONG_VALUE) {
         // we're in the easy/common case of promoting a weak-reference
         // from an existing strong reference.
-        if (android_atomic_cmpxchg(curCount, curCount+1, &impl->mStrong) == 0) {
+//        if (android_atomic_cmpxchg(curCount, curCount+1, &impl->mStrong) == 0) {
+        if (impl->mStrong.compare_exchange_strong(curCount, curCount+1)) {
             break;
         }
         // the strong count has changed on us, we need to re-assert our
@@ -468,8 +479,9 @@ bool RefBase::weakref_type::attemptIncStrong(const void* id)
             // there never was a strong-reference, so we can try to
             // promote this object; we need to do that atomically.
             while (curCount > 0) {
-                if (android_atomic_cmpxchg(curCount, curCount + 1,
-                        &impl->mStrong) == 0) {
+//                if (android_atomic_cmpxchg(curCount, curCount + 1,
+//                        &impl->mStrong) == 0) {
+                if(impl->mStrong.compare_exchange_strong(curCount, curCount+1)) {
                     break;
                 }
                 // the strong count has changed on us, we need to re-assert our
@@ -494,7 +506,8 @@ bool RefBase::weakref_type::attemptIncStrong(const void* id)
             }
             // grab a strong-reference, which is always safe due to the
             // extended life-time.
-            curCount = android_atomic_inc(&impl->mStrong);
+//            curCount = android_atomic_inc(&impl->mStrong);
+            curCount = impl->mStrong++;
         }
 
         // If the strong reference count has already been incremented by
@@ -521,8 +534,9 @@ bool RefBase::weakref_type::attemptIncStrong(const void* id)
         ALOG_ASSERT(curCount > INITIAL_STRONG_VALUE,
                 "attemptIncStrong in %p underflowed to INITIAL_STRONG_VALUE",
                 this);
-        if (android_atomic_cmpxchg(curCount, curCount-INITIAL_STRONG_VALUE,
-                &impl->mStrong) == 0) {
+//        if (android_atomic_cmpxchg(curCount, curCount-INITIAL_STRONG_VALUE,
+//                &impl->mStrong) == 0) {
+        if(impl->mStrong.compare_exchange_strong(curCount, curCount-INITIAL_STRONG_VALUE)) {
             break;
         }
         // the strong-count changed on us, we need to re-assert the situation,
@@ -541,7 +555,8 @@ bool RefBase::weakref_type::attemptIncWeak(const void* id)
     ALOG_ASSERT(curCount >= 0, "attemptIncWeak called on %p after underflow",
                this);
     while (curCount > 0) {
-        if (android_atomic_cmpxchg(curCount, curCount+1, &impl->mWeak) == 0) {
+//        if (android_atomic_cmpxchg(curCount, curCount+1, &impl->mWeak) == 0) {
+        if (impl->mWeak.compare_exchange_strong(curCount, curCount+1)) {
             break;
         }
         curCount = impl->mWeak;
@@ -608,7 +623,8 @@ RefBase::~RefBase()
 
 void RefBase::extendObjectLifetime(int32_t mode)
 {
-    android_atomic_or(mode, &mRefs->mFlags);
+//    android_atomic_or(mode, &mRefs->mFlags);
+    mRefs->mFlags |= mode;
 }
 
 void RefBase::onFirstRef()
