@@ -826,7 +826,7 @@ class BinderLibTestService : public BBinder
                 if (target == NULL) {
                     return BAD_VALUE;
                 }
-                callback = data.readStrongBinder();
+                callback = data.readStrongBinder();run_server
                 if (callback == NULL) {
                     return BAD_VALUE;
                 }

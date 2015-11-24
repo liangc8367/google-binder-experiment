@@ -17,7 +17,7 @@
 #ifndef ANDROID_THREAD_DEFS_H
 #define ANDROID_THREAD_DEFS_H
 
-#include "graphics.h"
+//#include "graphics.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -53,7 +53,7 @@ enum {
     ANDROID_PRIORITY_DISPLAY        =  -4,
 
     /* ui service treads might want to run at a urgent display (uncommon) */
-    ANDROID_PRIORITY_URGENT_DISPLAY =  HAL_PRIORITY_URGENT_DISPLAY,
+    ANDROID_PRIORITY_URGENT_DISPLAY =  -6, // liangc, 2015/11/24 HAL_PRIORITY_URGENT_DISPLAY,
 
     /* all normal audio threads */
     ANDROID_PRIORITY_AUDIO          = -16,

@@ -10,7 +10,7 @@
 #include <linux/types.h>  // for __u32 etc.
 #define __user
 
-#include "binder_uapi.h"
+#include "linux/binder.h"
 
 #ifdef __cplusplus
 extern "C"

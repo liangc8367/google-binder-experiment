@@ -17,7 +17,9 @@
 #ifndef ANDROID_REF_BASE_H
 #define ANDROID_REF_BASE_H
 
-#include <cutils/atomic.h>
+// liangc, 2015/11/24
+// #include <cutils/atomic.h>
+#include <atomic>
 
 #include <stdint.h>
 #include <sys/types.h>
@@ -176,10 +178,12 @@ class LightRefBase
 public:
     inline LightRefBase() : mCount(0) { }
     inline void incStrong(__attribute__((unused)) const void* id) const {
-        android_atomic_inc(&mCount);
+//        android_atomic_inc(&mCount);
+        mCount++;
     }
     inline void decStrong(__attribute__((unused)) const void* id) const {
-        if (android_atomic_dec(&mCount) == 1) {
+//        if (android_atomic_dec(&mCount) == 1) {
+        if (--mCount == 0 ){
             delete static_cast<const T*>(this);
         }
     }
@@ -200,7 +204,8 @@ private:
             const void* old_id, const void* new_id) { }
 
 private:
-    mutable volatile int32_t mCount;
+//    mutable volatile int32_t mCount;
+    mutable std::atomic_uint_least32_t mCount;
 };
 
 // This is a wrapper around LightRefBase that simply enforces a virtual

@@ -19,7 +19,9 @@
 
 #include <stdint.h>
 #include <sys/types.h>
+/* liangc, 2015/11/24
 #include <system/graphics.h>
+*/
 #include <system/thread_defs.h>
 
 // ---------------------------------------------------------------------------
