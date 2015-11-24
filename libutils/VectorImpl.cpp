@@ -21,7 +21,40 @@
 #include <stdio.h>
 
 #include <cutils/log.h>
+
+// liangc, 2015/11/24
+/*
+ * quoted: https://code.google.com/p/safe-iop/wiki/README
+ * Unsafe integer operations are a major cause of software defects even in modern day software.
+ * C is the underlying language for most high level languages (Ruby, Python, Java, etc.) in addition to being
+ * in widespread general use. C is a preferred language for high performance programming and is often used
+ * for media file parsing and manipulation.
+
+Integer overflows occur when the calculated integer requires more storage from the computing
+ platform than is available. If a number is too large, not all of its information can be stored.
+ This has dangerous side effects. For a detailed and thorough discussion on integer overflows,
+ please check out CERT's website on Secure Coding(1) and even Wikipedia(2).
+ */
+#if 0
 #include <safe_iop.h>
+#else
+static bool safe_mul(size_t *c, size_t a, size_t b)
+{
+    *c = a*b;
+    return true;
+}
+static bool safe_add(size_t *c, size_t a, size_t b)
+{
+    *c = a+b;
+    return true;
+}
+static bool safe_sub(size_t *c, size_t a, size_t b)
+{
+    *c = a/b;
+    return true;
+}
+
+#endif
 
 #include <utils/Errors.h>
 #include <utils/VectorImpl.h>

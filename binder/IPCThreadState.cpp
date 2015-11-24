@@ -38,6 +38,12 @@
 #include <sys/resource.h>
 #include <unistd.h>
 
+#include <sys/types.h> // for gettid()
+#include <sys/syscall.h>
+
+//liangc
+#define LOG_NDEBUG  1
+
 #if LOG_NDEBUG
 
 #define IF_LOG_TRANSACTIONS() if (false)
@@ -108,6 +114,11 @@ static const char *kCommandStrings[] = {
     "BC_CLEAR_DEATH_NOTIFICATION",
     "BC_DEAD_BINDER_DONE"
 };
+
+static pid_t gettid()
+{
+    return syscall(__NR_gettid);
+}
 
 static const char* getReturnString(size_t idx)
 {

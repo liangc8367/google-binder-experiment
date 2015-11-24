@@ -1161,6 +1161,8 @@ status_t Parcel::writeBlob(size_t len, bool mutableCopy, WritableBlob* outBlob)
     }
 
     status_t status;
+#if 0
+    //liangc, 2015/11/24
     if (!mAllowFds || len <= BLOB_INPLACE_LIMIT) {
         ALOGV("writeBlob: write in place");
         status = writeInt32(BLOB_INPLACE);
@@ -1206,6 +1208,7 @@ status_t Parcel::writeBlob(size_t len, bool mutableCopy, WritableBlob* outBlob)
         ::munmap(ptr, len);
     }
     ::close(fd);
+#endif
     return status;
 }
 

@@ -9,11 +9,18 @@ OBJS=\
 	binderThroughputTest.o \
 	ProcessState.o \
 	Parcel.o \
-	IServiceManager.o
+	IServiceManager.o \
+	Binder.o \
+	BpBinder.o \
+	Static.o \
+	IPCThreadState.o
 	
 UTIL_OBJS=\
 	String16.o \
-	RefBase.o
+	String8.o \
+	Threads.o \
+	RefBase.o \
+	VectorImpl.o
 	
 binder_throughput_test : $(OBJS) $(UTIL_OBJS)
 	g++ -o $@ $(OBJS) $(UTIL_OBJS)
@@ -30,10 +37,31 @@ Parcel.o : Parcel.cpp
 IServiceManager.o : IServiceManager.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
 
+Binder.o : Binder.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+	
+BpBinder.o : BpBinder.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+Static.o : Static.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+IPCThreadState.o : IPCThreadState.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+	
 ### library ###
 LIBUTILS_PATH=../libutils
 String16.o : $(LIBUTILS_PATH)/String16.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
+
+String8.o : $(LIBUTILS_PATH)/String8.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
 	
+Threads.o : $(LIBUTILS_PATH)/Threads.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+
 RefBase.o : $(LIBUTILS_PATH)/RefBase.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+VectorImpl.o : $(LIBUTILS_PATH)/VectorImpl.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
