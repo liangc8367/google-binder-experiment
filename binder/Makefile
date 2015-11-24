@@ -9,6 +9,7 @@ OBJS=\
 	binderThroughputTest.o \
 	ProcessState.o \
 	Parcel.o \
+	IServiceManager.o
 	
 UTIL_OBJS=\
 	String16.o \
@@ -24,6 +25,9 @@ ProcessState.o : ProcessState.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
 
 Parcel.o : Parcel.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+IServiceManager.o : IServiceManager.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
 
 ### library ###
