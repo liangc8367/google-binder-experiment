@@ -7,12 +7,16 @@ CPPFLAGS=-g -std=c++11 -I$(INC_PATH)
 
 OBJS=\
 	binderThroughputTest.o \
+	ProcessState.o \
 	String16.o
 	
 binder_throughput_test : $(OBJS)
-	g++ -o $@ $<
+	g++ -o $@ $(OBJS)
 
 binderThroughputTest.o : tests/binderThroughputTest.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+
+ProcessState.o : ProcessState.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
 
 ### library ###

@@ -39,6 +39,7 @@ namespace android {
  * A very simple utility that yells in the log when an operation takes too long.
  */
 class LogIfSlow {
+#if 0
 public:
     LogIfSlow(const char* tag, android_LogPriority priority,
             int timeoutMillis, const char* message);
@@ -63,6 +64,7 @@ private:
  */
 #define ALOGD_IF_SLOW(timeoutMillis, message) \
     android::LogIfSlow _logIfSlow(LOG_TAG, ANDROID_LOG_DEBUG, timeoutMillis, message);
+#endif
 
 } // namespace android
 

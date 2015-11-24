@@ -29,8 +29,10 @@
 #include <utils/String8.h>
 #include <utils/threads.h>
 
+#if 0
 #include <private/binder/binder_module.h>
 #include <private/binder/Static.h>
+#endif
 
 #include <errno.h>
 #include <fcntl.h>
