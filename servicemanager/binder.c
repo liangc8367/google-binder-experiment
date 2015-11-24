@@ -14,11 +14,12 @@
 
 #define MAX_BIO_SIZE (1 << 30)
 
-#define TRACE 0
+#define TRACE 1
 
 #define LOG_TAG "Binder"
 //#include <cutils/log.h>
 #define ALOGE(fmt, ...) fprintf(stderr, LOG_TAG": "fmt, ##__VA_ARGS__)
+#define ALOGI(fmt, ...) fprintf(stderr, LOG_TAG"[i]: "fmt, ##__VA_ARGS__)
 
 void bio_init_from_txn(struct binder_io *io, struct binder_transaction_data *txn);
 
@@ -153,6 +154,10 @@ int binder_write(struct binder_state *bs, void *data, size_t len)
 {
     struct binder_write_read bwr;
     int res;
+
+#if TRACE
+    ALOGI("binder_write: data = %p, len = %lu\n", data, len);
+#endif
 
     bwr.write_size = len;
     bwr.write_consumed = 0;
@@ -388,7 +393,18 @@ void binder_loop(struct binder_state *bs, binder_handler func)
         bwr.read_consumed = 0;
         bwr.read_buffer = (uintptr_t) readbuf;
 
+#if TRACE
+        ALOGI("binder_loop: write_size = %llu, write_consumed = %llu, write_buffer = 0x%llx, \n\t"
+                "read_size = %llu, read_consumed = %llu, read_buffer = 0x%llx\n",
+                bwr.write_size, bwr.write_consumed, bwr.write_buffer,
+                bwr.read_size, bwr.read_consumed, bwr.read_buffer);
+#endif
         res = ioctl(bs->fd, BINDER_WRITE_READ, &bwr);
+
+#if TRACE
+        ALOGI("binder_loop: read_size = %llu, read_consumed = %llu, read_buffer = 0x%llx\n",
+                bwr.read_size, bwr.read_consumed, bwr.read_buffer);
+#endif
 
         if (res < 0) {
             ALOGE("binder_loop: ioctl failed (%s)\n", strerror(errno));

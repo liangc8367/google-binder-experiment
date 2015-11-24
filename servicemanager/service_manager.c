@@ -223,8 +223,8 @@ int do_add_service(struct binder_state *bs,
 {
     struct svcinfo *si;
 
-    //ALOGI("add_service('%s',%x,%s) uid=%d\n", str8(s, len), handle,
-    //        allow_isolated ? "allow_isolated" : "!allow_isolated", uid);
+    ALOGI("add_service('%s',%x,%s) uid=%d\n", str8(s, len), handle,
+            allow_isolated ? "allow_isolated" : "!allow_isolated", uid);
 
     if (!handle || (len == 0) || (len > 127))
         return -1;
@@ -278,14 +278,14 @@ int svcmgr_handler(struct binder_state *bs,
     uint32_t strict_policy;
     int allow_isolated;
 
-    //ALOGI("target=%p code=%d pid=%d uid=%d\n",
-    //      (void*) txn->target.ptr, txn->code, txn->sender_pid, txn->sender_euid);
+    ALOGI("target=%p code=%d pid=%d uid=%d\n",
+          (void*) txn->target.ptr, txn->code, txn->sender_pid, txn->sender_euid);
 
     if (txn->target.ptr != BINDER_SERVICE_MANAGER)
         return -1;
 
     if (txn->code == PING_TRANSACTION)
-        return 0;
+        return 0;   // ??? liangc, should we send a reply?
 
     // Equivalent to Parcel::enforceInterface(), reading the RPC
     // header with the strict mode policy mask and the interface name.
@@ -296,6 +296,8 @@ int svcmgr_handler(struct binder_state *bs,
     if (s == NULL) {
         return -1;
     }
+
+    ALOGI("svcmgr_handler: s == %s\n", str8(s, len));
 
     if ((len != (sizeof(svcmgr_id) / 2)) ||
         memcmp(svcmgr_id, s, sizeof(svcmgr_id))) {
@@ -321,8 +323,8 @@ int svcmgr_handler(struct binder_state *bs,
             return -1;
         }
         handle = do_find_service(bs, s, len, txn->sender_euid, txn->sender_pid);
-        if (!handle)
-            break;
+//        if (!handle)
+//            break;
         bio_put_ref(reply, handle);
         return 0;
 
@@ -339,6 +341,7 @@ int svcmgr_handler(struct binder_state *bs,
         break;
 
     case SVC_MGR_LIST_SERVICES: {
+        /* list n-th service */
         uint32_t n = bio_get_uint32(msg);
 
         if (!svc_can_list(txn->sender_pid, txn->sender_euid)) {

@@ -45,7 +45,7 @@ struct binder_death {
 enum {
     /* Must match definitions in IBinder.h and IServiceManager.h */
     PING_TRANSACTION  = B_PACK_CHARS('_','P','N','G'),
-    SVC_MGR_GET_SERVICE = 1,
+    SVC_MGR_GET_SERVICE = 1, // equals to IBinder::FIRST_CALL_TRANSACTION,
     SVC_MGR_CHECK_SERVICE,
     SVC_MGR_ADD_SERVICE,
     SVC_MGR_LIST_SERVICES,
