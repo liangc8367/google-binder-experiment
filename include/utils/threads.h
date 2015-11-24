@@ -24,9 +24,7 @@
  * the headers you need below.
  *
  */
-/* liangc, 2015/11/24
 #include <utils/AndroidThreads.h>
-*/
 
 #ifdef __cplusplus
 #include <utils/Condition.h>

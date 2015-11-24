@@ -17,6 +17,13 @@
 #ifndef ANDROID_PROCESS_STATE_H
 #define ANDROID_PROCESS_STATE_H
 
+#define ALOGE(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
+#define ALOGI(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
+#define ALOGV(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
+#define ALOGW(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
+#define LOG_ALWAYS_FATAL_IF(cond, message, ...) assert(cond)
+#define LOG_FATAL_IF(cond, message, ...) assert(cond)
+
 #include <binder/IBinder.h>
 #include <utils/KeyedVector.h>
 #include <utils/String8.h>
@@ -106,7 +113,8 @@ private:
 
             String8             mRootDir;
             bool                mThreadPoolStarted;
-    volatile int32_t            mThreadPoolSeq;
+//    volatile int32_t            mThreadPoolSeq;
+            std::atomic_int_least32_t mThreadPoolSeq;
 };
     
 }; // namespace android
