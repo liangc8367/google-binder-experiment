@@ -205,7 +205,10 @@ status_t BBinder::onTransact(
         }
 
         case SYSPROPS_TRANSACTION: {
+#if 0
+            // liangc, TODO: this is for system property change?
             report_sysprop_change();
+#endif
             return NO_ERROR;
         }
 

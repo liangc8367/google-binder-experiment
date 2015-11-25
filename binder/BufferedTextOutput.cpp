@@ -105,7 +105,8 @@ void BufferedTextOutput::threadDestructor(void *st)
     delete ((ThreadState*)st);
 }
 
-static volatile int32_t gSequence = 0;
+//static volatile int32_t gSequence = 0;
+static std::atomic_int_fast32_t gSequence(0);
 
 static volatile int32_t gFreeBufferIndex = -1;
 
@@ -142,7 +143,8 @@ static void freeBufferIndex(int32_t idx)
 
 BufferedTextOutput::BufferedTextOutput(uint32_t flags)
     : mFlags(flags)
-    , mSeq(android_atomic_inc(&gSequence))
+//    , mSeq(android_atomic_inc(&gSequence))
+    , mSeq(++gSequence)
     , mIndex(allocBufferIndex())
 {
     mGlobalState = new BufferState(mSeq);

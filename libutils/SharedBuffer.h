@@ -95,7 +95,8 @@ private:
         SharedBuffer& operator = (const SharedBuffer&);
  
         // 16 bytes. must be sized to preserve correct alignment.
-        mutable int32_t        mRefs;
+//        mutable int32_t        mRefs;
+        mutable std::atomic_int_least32_t mRefs;
                 size_t         mSize;
                 uint32_t       mReserved[2];
 };

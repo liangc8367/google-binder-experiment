@@ -19,7 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <log/log.h>
+//#include <log/log.h>
+#include <cutils/log.h>
+
 #include <utils/Atomic.h>
 
 #include "SharedBuffer.h"
@@ -108,13 +110,15 @@ SharedBuffer* SharedBuffer::reset(size_t new_size) const
 }
 
 void SharedBuffer::acquire() const {
-    android_atomic_inc(&mRefs);
+//    android_atomic_inc(&mRefs);
+    ++mRefs;
 }
 
 int32_t SharedBuffer::release(uint32_t flags) const
 {
     int32_t prev = 1;
-    if (onlyOwner() || ((prev = android_atomic_dec(&mRefs)) == 1)) {
+//    if (onlyOwner() || ((prev = android_atomic_dec(&mRefs)) == 1)) {
+    if (onlyOwner() || ((prev = mRefs--)==1)) { //liangc, bad small in this if statement
         mRefs = 0;
         if ((flags & eKeepStorage) == 0) {
             free(const_cast<SharedBuffer*>(this));

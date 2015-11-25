@@ -23,6 +23,7 @@
 #include <binder/TextOutput.h>
 
 #include <cutils/sched_policy.h>
+#include <cutils/threads.h>
 #include <utils/Log.h>
 #include <utils/threads.h>
 
@@ -37,9 +38,6 @@
 #include <sys/ioctl.h>
 #include <sys/resource.h>
 #include <unistd.h>
-
-#include <sys/types.h> // for gettid()
-#include <sys/syscall.h>
 
 //liangc
 #define LOG_NDEBUG  1
@@ -114,11 +112,6 @@ static const char *kCommandStrings[] = {
     "BC_CLEAR_DEATH_NOTIFICATION",
     "BC_DEAD_BINDER_DONE"
 };
-
-static pid_t gettid()
-{
-    return syscall(__NR_gettid);
-}
 
 static const char* getReturnString(size_t idx)
 {

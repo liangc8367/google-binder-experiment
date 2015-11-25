@@ -1162,7 +1162,7 @@ status_t Parcel::writeBlob(size_t len, bool mutableCopy, WritableBlob* outBlob)
 
     status_t status;
 #if 0
-    //liangc, 2015/11/24
+    //liangc, 2015/11/24 TODO: ashmem
     if (!mAllowFds || len <= BLOB_INPLACE_LIMIT) {
         ALOGV("writeBlob: write in place");
         status = writeInt32(BLOB_INPLACE);
@@ -1881,7 +1881,7 @@ native_handle* Parcel::readNativeHandle() const
     err = readInt32(&numInts);
     if (err != NO_ERROR) return 0;
 
-    native_handle* h = native_handle_create(numFds, numInts);
+    native_handle* h = 0; //liangc, TODO: from jni/ libcutils/ jni/ native_handle.c? native_handle_create(numFds, numInts);
     if (!h) {
         return 0;
     }
@@ -1892,8 +1892,10 @@ native_handle* Parcel::readNativeHandle() const
     }
     err = read(h->data + numFds, sizeof(int)*numInts);
     if (err != NO_ERROR) {
+#if 0 // liangc, TODO
         native_handle_close(h);
         native_handle_delete(h);
+#endif
         h = 0;
     }
     return h;

@@ -24,7 +24,7 @@
 #include <unistd.h>
 
 #include <cutils/sched_policy.h>
-#include <log/log.h>
+//#include <log/log.h>
 
 #define UNUSED __attribute__((__unused__))
 
@@ -36,6 +36,8 @@ static inline SchedPolicy _policy(SchedPolicy p)
 {
    return p == SP_DEFAULT ? SP_SYSTEM_DEFAULT : p;
 }
+
+//liangc, TODO: I haven't enabled __ANDROID__ yet
 
 #if defined(__ANDROID__)
 
