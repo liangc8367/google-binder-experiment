@@ -44,6 +44,7 @@
 #include <utils/Log.h>
 
 #include <cutils/sched_policy.h>
+#include <cutils/threads.h>
 
 #if defined(__ANDROID__)
 # define __android_unused
@@ -833,6 +834,15 @@ bool Thread::isRunning() const {
 }
 
 #if defined(__ANDROID__)
+
+//liangc, 2015/11/27 copied from libc/bionic/pthread_gettid_np.cpp
+#include <pthread_internal.h>
+
+pid_t pthread_gettid_np(pthread_t t) {
+  return reinterpret_cast<pthread_internal_t*>(t)->tid;
+}
+// end of liangc
+
 pid_t Thread::getTid() const
 {
     // mTid is not defined until the child initializes it, and the caller may need it earlier

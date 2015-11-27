@@ -2,8 +2,9 @@
 # liangc, 2015/11/24
 
 INC_PATH=../include
-CPPFLAGS=-g -std=c++11 -I$(INC_PATH) 
-CFLAGS=-g -std=c11 -I$(INC_PATH)
+COMM_FLAGS=-D__ANDROID__
+CPPFLAGS=-g -std=c++11 -I$(INC_PATH) $(COMM_FLAGS)
+CFLAGS=-g -std=c11 -I$(INC_PATH) $(COMM_FLAGS)
 
 OBJS=\
 	binderThroughputTest.o \
