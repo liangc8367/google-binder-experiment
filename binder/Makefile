@@ -36,8 +36,11 @@ CUTIL_OBJS=\
 	threads.o	\
 	sched_policy.o
 	
-binder_throughput_test : $(OBJS) $(UTIL_OBJS)
+binder_throughput_test : $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 	g++ -pthread -o $@ $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	
+clean:
+	rm -f binder_throughput_test $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 
 binderThroughputTest.o : tests/binderThroughputTest.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<

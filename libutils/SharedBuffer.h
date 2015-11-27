@@ -19,7 +19,7 @@
 
 #include <stdint.h>
 #include <sys/types.h>
-
+#include <atomic>
 // ---------------------------------------------------------------------------
 
 namespace android {
