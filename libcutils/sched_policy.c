@@ -38,6 +38,9 @@ static inline SchedPolicy _policy(SchedPolicy p)
 }
 
 //liangc, TODO: I haven't enabled __ANDROID__ yet
+#if defined(__ANDROID__)
+#undef __ANDROID__
+#endif
 
 #if defined(__ANDROID__)
 

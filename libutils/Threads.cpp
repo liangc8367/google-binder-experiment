@@ -835,16 +835,12 @@ bool Thread::isRunning() const {
 
 #if defined(__ANDROID__)
 
-//liangc, 2015/11/27 copied from libc/bionic/pthread_gettid_np.cpp
-#include <pthread_internal.h>
-
-pid_t pthread_gettid_np(pthread_t t) {
-  return reinterpret_cast<pthread_internal_t*>(t)->tid;
-}
-// end of liangc
 
 pid_t Thread::getTid() const
 {
+    // liangc, TODO:
+    return -1;
+#if 0
     // mTid is not defined until the child initializes it, and the caller may need it earlier
     Mutex::Autolock _l(mLock);
     pid_t tid;
@@ -856,6 +852,7 @@ pid_t Thread::getTid() const
         tid = -1;
     }
     return tid;
+#endif
 }
 #endif
 

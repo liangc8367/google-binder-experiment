@@ -19,6 +19,11 @@
  * System clock functions.
  */
 
+// liangc, TODO:
+#if defined(__ANDROID__)
+#undef __ANDROID__
+#endif
+
 #if defined(__ANDROID__)
 #include <linux/ioctl.h>
 #include <linux/rtc.h>

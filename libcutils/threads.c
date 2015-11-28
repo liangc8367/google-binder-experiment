@@ -16,6 +16,12 @@
 
 #include "cutils/threads.h"
 
+//liangc, TODO
+#if defined(__ANDROID__)
+#undef __ANDROID__
+#endif
+
+
 // For gettid.
 #if defined(__APPLE__)
 #include "AvailabilityMacros.h"  // For MAC_OS_X_VERSION_MAX_ALLOWED
