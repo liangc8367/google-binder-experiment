@@ -40,11 +40,14 @@ CUTIL_OBJS=\
 binder_throughput_test : binder_throughput_test.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 	g++ -pthread -o $@ binder_throughput_test.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 	
-demo_service : demo_service.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
-	g++ -pthread -o $@ demo_service.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+demo_service : demo_service.o IDemoInterface.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	g++ -pthread -o $@ demo_service.o IDemoInterface.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 	
+IDemoInterface.o : tests/IDemoInterface.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<
+		
 clean:
-	rm -f binder_throughput_test demo_service.* $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	rm -f binder_throughput_test demo_service.* IDemoService.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 
 binderThroughputTest.o : tests/binderThroughputTest.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<

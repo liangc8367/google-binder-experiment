@@ -24,14 +24,10 @@ protected:
                                     const Parcel& data,
                                     Parcel* reply,
                                     uint32_t flags = 0);
-//private:
-public:
-//    friend class DemoServiceStarter;
+private:
+//public:
+    friend class BinderService<BnDemoImpl>;
     static char const * getServiceName() { return "demoService"; };
-};
-
-class DemoServiceStarter : BinderService<BnDemoImpl>
-{
 };
 
 uint64_t BnDemoImpl::getEuid() const
@@ -66,11 +62,12 @@ status_t BnDemoImpl::onTransact( uint32_t code,
 
     case DEMO_LIST_SERVICES:
     default:
+        return BBinder::onTransact(code, data, reply, flags);
         break;
     }
-    return BBinder::onTransact(code, data, reply, flags);
 };
 
+//IMPLEMENT_META_INTERFACE(DemoInterface, "my.test.demo_interface");
 
 }; // end of namespace my_test
 
@@ -80,7 +77,7 @@ using namespace my_test;
 int main(int argc, char * argv[])
 {
     cout << "Starting Demo service...";
-    DemoServiceStarter::publishAndJoinThreadPool();
+    BinderService<BnDemoImpl>::publishAndJoinThreadPool();
     cout << " started\n";
 
     while(true){

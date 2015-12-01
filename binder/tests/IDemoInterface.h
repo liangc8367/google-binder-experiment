@@ -1,5 +1,5 @@
-#ifndef __IDEMOSERVICE_H__
-#define __IDEMOSERVICE_H__
+#ifndef __IDEMOINTERFACE_H__
+#define __IDEMOINTERFACE_H__
 
 #include <sys/types.h>
 
@@ -29,12 +29,8 @@ public:
     };
 };
 
-class BpDemoService : public BpInterface<IDemoInterface>
-{
-
-};
 
 };
 
 
-#endif
+#endif // __IDEMOINTERFACE_H__
