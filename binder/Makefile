@@ -2,12 +2,12 @@
 # liangc, 2015/11/24
 
 INC_PATH=../include
-COMM_FLAGS=-D__ANDROID__
+COMM_FLAGS=-D__ANDROID__ 
+## not supported in stock binder driver -DHAS_BC_ATTEMPT_ACQUIRE=1
 CPPFLAGS=-g -std=c++11 -I$(INC_PATH) $(COMM_FLAGS)
 CFLAGS=-g -std=c11 -I$(INC_PATH) $(COMM_FLAGS)
 
 OBJS=\
-	binderThroughputTest.o \
 	ProcessState.o \
 	IPCThreadState.o \
 	Parcel.o \
@@ -37,14 +37,20 @@ CUTIL_OBJS=\
 	threads.o	\
 	sched_policy.o
 	
-binder_throughput_test : $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
-	g++ -pthread -o $@ $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+binder_throughput_test : binder_throughput_test.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	g++ -pthread -o $@ binder_throughput_test.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	
+demo_service : demo_service.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	g++ -pthread -o $@ demo_service.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 	
 clean:
-	rm -f binder_throughput_test $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	rm -f binder_throughput_test demo_service.* $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 
 binderThroughputTest.o : tests/binderThroughputTest.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
+	
+demo_service.o : tests/demoService.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<	
 
 ProcessState.o : ProcessState.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
