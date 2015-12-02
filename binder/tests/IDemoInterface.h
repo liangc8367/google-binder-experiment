@@ -27,6 +27,8 @@ public:
         DEMO_GET_UID,
         DEMO_LIST_SERVICES
     };
+
+    static const char * MY_IFACE_NAME;
 };
 
 

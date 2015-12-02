@@ -17,4 +17,6 @@ public:
 };
 
 
-IMPLEMENT_META_INTERFACE(DemoInterface, "my.test.demo_interface");
+IMPLEMENT_META_INTERFACE(DemoInterface, MY_IFACE_NAME);
+
+const char * IDemoInterface::MY_IFACE_NAME = "my.test.demoIface";

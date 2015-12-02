@@ -5,7 +5,7 @@
 
 #include <binder/IPCThreadState.h>
 #include <binder/BinderService.h>
-#include "IDemoService.h"
+#include "IDemoInterface.h"
 
 using namespace std;
 using namespace android;
@@ -25,9 +25,8 @@ protected:
                                     Parcel* reply,
                                     uint32_t flags = 0);
 private:
-//public:
     friend class BinderService<BnDemoImpl>;
-    static char const * getServiceName() { return "demoService"; };
+    static char const * getServiceName() { return MY_IFACE_NAME; };
 };
 
 uint64_t BnDemoImpl::getEuid() const
@@ -66,8 +65,6 @@ status_t BnDemoImpl::onTransact( uint32_t code,
         break;
     }
 };
-
-//IMPLEMENT_META_INTERFACE(DemoInterface, "my.test.demo_interface");
 
 }; // end of namespace my_test
 
