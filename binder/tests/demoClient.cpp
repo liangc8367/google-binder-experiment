@@ -26,5 +26,9 @@ int main(int argc, char * argv[])
 
     cout << "demoIface := " << demoIface.get() << endl;
 
+    uint64_t pid2 = demoIface->getPid();
+
+    cout << "my pid: " << pid2 << endl;
+
     cout << "bye!" << endl;
 }
