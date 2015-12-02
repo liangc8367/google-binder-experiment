@@ -1,0 +1,1 @@
+copied from android /system/core/libcutils

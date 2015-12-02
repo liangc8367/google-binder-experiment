@@ -2608,7 +2608,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		}
 		//binder_debug(BINDER_DEBUG_READ_WRITE,
 		binder_debug(BINDER_DEBUG_USER_ERROR,
-			     "%d:%d write %zd at %016lx, read %zd at %016lx\n",
+			     "%d:%d write %zd at 0x%p, read %zd at 0x%p\n",
 			     proc->pid, thread->pid, bwr.write_size,
 			     bwr.write_buffer, bwr.read_size, bwr.read_buffer);
 
@@ -3560,17 +3560,21 @@ static int __init binder_init(void)
 {
 	int ret;
 
-	pr_info("binder: init\n");
+	pr_err("binder: init\n");
 
 	binder_deferred_workqueue = create_singlethread_workqueue("binder");
 	if (!binder_deferred_workqueue)
 		return -ENOMEM;
-
+#if 0
 	binder_debugfs_dir_entry_root = debugfs_create_dir("binder", NULL);
 	if (binder_debugfs_dir_entry_root)
 		binder_debugfs_dir_entry_proc = debugfs_create_dir("proc",
 						 binder_debugfs_dir_entry_root);
+#endif
+
 	ret = misc_register(&binder_miscdev);
+
+#if 0
 	if (binder_debugfs_dir_entry_root) {
 		debugfs_create_file("state",
 				    S_IRUGO,
@@ -3598,10 +3602,27 @@ static int __init binder_init(void)
 				    &binder_transaction_log_failed,
 				    &binder_transaction_log_fops);
 	}
+#endif
 	return ret;
 }
 
+#if 0
 device_initcall(binder_init);
+#else
+static void __exit binder_exit(void)
+{
+	int ret;
+	ret = misc_deregister(&binder_miscdev);
+	destroy_workqueue(binder_deferred_workqueue);
+
+	pr_err("binder: exit, misc dev dereg: %d\n", ret);
+	
+}
+
+
+module_init(binder_init);
+module_exit(binder_exit);
+#endif
 
 #define CREATE_TRACE_POINTS
 // #include "binder_trace.h"
