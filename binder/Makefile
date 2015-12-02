@@ -43,16 +43,22 @@ binder_throughput_test : binder_throughput_test.o $(OBJS) $(UTIL_OBJS) $(CUTIL_O
 demo_service : demo_service.o IDemoInterface.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 	g++ -pthread -o $@ demo_service.o IDemoInterface.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 	
+demo_client : demo_client.o IDemoInterface.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	g++ -pthread -o $@ demo_client.o IDemoInterface.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+
 IDemoInterface.o : tests/IDemoInterface.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
 		
 clean:
-	rm -f binder_throughput_test demo_service.* IDemoService.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
+	rm -f binder_throughput_test demo_service.* demo_client.* IDemoService.o $(OBJS) $(UTIL_OBJS) $(CUTIL_OBJS)
 
 binderThroughputTest.o : tests/binderThroughputTest.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<
 	
 demo_service.o : tests/demoService.cpp
+	g++ $(CPPFLAGS) -c -o $@ $<	
+
+demo_client.o : tests/demoClient.cpp
 	g++ $(CPPFLAGS) -c -o $@ $<	
 
 ProcessState.o : ProcessState.cpp
