@@ -1,6 +1,8 @@
+#include <iostream>
 #include <binder/Parcel.h>
 #include "IDemoInterface.h"
 
+using namespace std;
 using namespace android;
 using namespace my_test;
 
@@ -13,8 +15,9 @@ public:
 
     }
 
-    virtual uint64_t getPid() const;
-    virtual uint64_t getEuid() const;
+    uint64_t getPid() const;
+    uint64_t getEuid() const;
+    vector<String16> listServices();
 };
 
 IMPLEMENT_META_INTERFACE(DemoInterface, MY_IFACE_NAME);
@@ -36,3 +39,14 @@ uint64_t BpDemoInterface::getEuid() const
     uint64_t uid = reply.readUint64();
     return uid;
 }
+
+vector<String16> BpDemoInterface::listServices()
+{
+    Parcel data, reply;
+    remote()->transact(DEMO_LIST_SERVICES, data, &reply);
+    vector<String16> services;
+    status_t status = reply.readString16Vector(&services);
+    cout << "listService, readString16Vector : " << status << endl;
+    return services;
+}
+

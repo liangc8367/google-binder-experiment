@@ -2,10 +2,13 @@
 #define __IDEMOINTERFACE_H__
 
 #include <sys/types.h>
+#include <vector>
 
 #include <binder/IInterface.h>
 #include <utils/Vector.h>
 #include <utils/String16.h>
+
+using namespace std;
 using namespace android;
 
 namespace my_test {
@@ -19,8 +22,7 @@ public:
 
     virtual uint64_t getPid() const = 0;
     virtual uint64_t getEuid() const = 0;
-//    virtual Vector<String16> listServices() = 0;
-
+    virtual vector<String16> listServices() = 0;
 
     enum {
         DEMO_GET_PID = IBinder::FIRST_CALL_TRANSACTION,

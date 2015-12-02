@@ -18,6 +18,7 @@ class BnDemoImpl : public BnInterface<IDemoInterface>
 public:
     uint64_t getEuid() const;
     uint64_t getPid() const;
+    vector<String16> listServices();
 
 protected:
     status_t    onTransact( uint32_t code,
@@ -38,6 +39,22 @@ uint64_t BnDemoImpl::getPid() const
 {
     return getpid();
 };
+
+vector<String16> BnDemoImpl::listServices()
+{
+    sp<IServiceManager> svcMgr = defaultServiceManager();
+    Vector<String16> services = svcMgr->listServices();
+
+    vector<String16> svcs;
+
+    cout << "services are: " << endl;
+    for(size_t i = 0; i < services.size(); i++){
+        cout << services[i] << endl;
+        svcs.push_back(String16(services[i]));
+    }
+    cout << "." << endl;
+    return svcs;
+}
 
 status_t BnDemoImpl::onTransact( uint32_t code,
                                     const Parcel& data,
@@ -60,6 +77,13 @@ status_t BnDemoImpl::onTransact( uint32_t code,
         break;
 
     case DEMO_LIST_SERVICES:
+    {
+        vector<String16> services = listServices();
+        reply->writeString16Vector(services);
+        return OK;
+    }
+        break;
+
     default:
         return BBinder::onTransact(code, data, reply, flags);
         break;
